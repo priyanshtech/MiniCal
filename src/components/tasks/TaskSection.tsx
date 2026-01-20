@@ -48,8 +48,8 @@ export default function TaskSection({
     };
 
     return (
-        <div className="bg-card rounded-lg shadow p-6 overflow-y-auto h-120">
-            <div className="flex justify-between items-center mb-4">
+        <div className="bg-card rounded-lg shadow p-6 flex flex-col h-120">
+            <div className="flex  justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">Tasks</h2>
                 <button
                     onClick={onAddTask}
@@ -57,11 +57,13 @@ export default function TaskSection({
                 >
                     + Add Task
                 </button>
+                
             </div>
+            <h2 className="text-xl font-bold mb-4">{dateStr}</h2>
 
             {/* Task List Content */}
-            <div className="task-list-container">
-                <h2 className="text-xl font-bold mb-4">{dateStr}</h2>
+            <div className="flex1 overflow-y-auto">
+                
 
                 {tasks.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">

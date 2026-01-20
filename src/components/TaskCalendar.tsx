@@ -67,72 +67,8 @@ export default function TaskCalendar({ tasks, onDateSelect }: TaskCalendarProps)
         value={selectedDate}
         tileContent={tileContent}
         tileClassName={tileClassName}
-        className="rounded-lg border shadow-sm text-black"
+        className="rounded-lg border shadow-sm text-black "
       />
-
-      <style jsx global>{`
-        .calendar-container {
-          max-width: 100%;
-        }
-
-        .react-calendar {
-          width: 100%;
-          border: none;
-          font-family: inherit;
-        }
-
-        .react-calendar__tile {
-          padding: 1rem 0.5rem;
-          position: relative;
-        }
-
-        .react-calendar__tile:enabled:hover,
-        .react-calendar__tile:enabled:focus {
-          background-color: #f3f4f6;
-        }
-
-        .dark .react-calendar__tile:enabled:hover,
-        .dark .react-calendar__tile:enabled:focus {
-          background-color: #374151;
-        }
-
-        .react-calendar__tile--active {
-          background-color: #3b82f6 !important;
-          color: white;
-        }
-
-        .react-calendar__tile--active:enabled:hover,
-        .react-calendar__tile--active:enabled:focus {
-          background-color: #2563eb !important;
-        }
-
-        .react-calendar__tile.has-tasks {
-          font-weight: 600;
-        }
-
-        .react-calendar__month-view__days__day--weekend {
-          color: #141212ff;
-        } 
-
-        .dark .react-calendar__month-view__days__day--weekend {
-          color: #ededed;
-        }
-
-        .react-calendar__navigation button {
-          font-size: 1rem;
-          font-weight: 600;
-        }
-
-        .react-calendar__navigation button:enabled:hover,
-        .react-calendar__navigation button:enabled:focus {
-          background-color: #f3f4f6;
-        }
-
-        .dark .react-calendar__navigation button:enabled:hover,
-        .dark .react-calendar__navigation button:enabled:focus {
-          background-color: #374151;
-        }
-      `}</style>
     </div>
   );
 }

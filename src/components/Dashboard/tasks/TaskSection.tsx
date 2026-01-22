@@ -48,7 +48,7 @@ export default function TaskSection({
     };
 
     return (
-        <div className="bg-card rounded-lg border border-border p-5 flex flex-col h-120">
+        <div className="bg-card rounded-lg border border-border p-5 flex flex-col h-130">
             <div className="flex justify-between items-center mb-3">
                 <h2 className="text-base font-medium">Tasks</h2>
                 <button

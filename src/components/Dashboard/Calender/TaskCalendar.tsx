@@ -41,7 +41,7 @@ export default function TaskCalendar({ tasks, onDateSelect }: TaskCalendarProps)
     if (hasTasks) {
       return (
         <div className="flex justify-center mt-1">
-          <div className="w-3 h-1.5 bg-blue-500 rounded-full"></div>
+          <div className="w-1 h-1 bg-primary rounded-full"></div>
         </div>
       );
     }
@@ -61,15 +61,15 @@ export default function TaskCalendar({ tasks, onDateSelect }: TaskCalendarProps)
   };
 
   return (
-    <div className="bg-card rounded-lg shadow p-6">
-      <h2 className="text-lg font-semibold mb-4 text-card-foreground">Calendar</h2>
+    <div className="bg-card rounded-lg border border-border p-5">
+      <h2 className="text-base font-medium mb-4 text-card-foreground">Calendar</h2>
       <div className="calendar-container">
         <Calendar
           onChange={(value) => handleDateClick(value as Date)}
           value={selectedDate}
           tileContent={tileContent}
           tileClassName={tileClassName}
-          className="rounded-lg border shadow-sm text-black"
+          className="rounded-md border border-border"
         />
       </div>
     </div>

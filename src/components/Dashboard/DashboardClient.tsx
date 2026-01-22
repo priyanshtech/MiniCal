@@ -159,35 +159,37 @@ export default function DashboardClient({ user }: DashboardClientProps) {
             <DashboardHeader userName={user?.name || user?.email} />
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
                 {error && (
-                    <div className="mb-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
+                    <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
                         {error}
                     </div>
                 )}
 
                 {loading ? (
                     <div className="text-center py-12">
-                        <p className="text-muted-foreground">Loading tasks...</p>
+                        <p className="text-muted-foreground text-sm">Loading tasks...</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <TaskCalendar
-                            tasks={tasks}
-                            onDateSelect={handleDateSelect}
-                        />
+                    <>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <TaskCalendar
+                                tasks={tasks}
+                                onDateSelect={handleDateSelect}
+                            />
 
-                        <TaskSection
-                            tasks={filteredTasks}
-                            selectedDate={selectedDate}
-                            onToggle={handleToggleTask}
-                            onDelete={handleDeleteTask}
-                            onAddTask={() => setShowTaskForm(true)}
-                        />
-                    </div>
+                            <TaskSection
+                                tasks={filteredTasks}
+                                selectedDate={selectedDate}
+                                onToggle={handleToggleTask}
+                                onDelete={handleDeleteTask}
+                                onAddTask={() => setShowTaskForm(true)}
+                            />
+                        </div>
+
+                        <TaskStatistics tasks={filteredTasks} />
+                    </>
                 )}
-
-                <TaskStatistics tasks={tasks} />
             </main>
 
             {/* Task Form Modal */}

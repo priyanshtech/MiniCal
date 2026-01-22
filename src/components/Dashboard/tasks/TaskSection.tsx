@@ -33,49 +33,46 @@ export default function TaskSection({
         day: 'numeric'
     });
 
-    // Get priority color
+    // Get priority color - minimal, subtle badges
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case 'high':
-                return 'bg-red-100 text-red-800 border-red-200';
+                return 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900';
             case 'medium':
-                return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+                return 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900';
             case 'low':
-                return 'bg-green-100 text-green-800 border-green-200';
+                return 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900';
             default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+                return 'bg-muted text-muted-foreground border-border';
         }
     };
 
     return (
-        <div className="bg-card rounded-lg shadow p-6 flex flex-col h-120">
-            <div className="flex  justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold">Tasks</h2>
+        <div className="bg-card rounded-lg border border-border p-5 flex flex-col h-120">
+            <div className="flex justify-between items-center mb-3">
+                <h2 className="text-base font-medium">Tasks</h2>
                 <button
                     onClick={onAddTask}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity text-sm font-medium"
                 >
-                    + Add Task
+                    Add Task
                 </button>
-                
             </div>
-            <h2 className="text-xl font-bold mb-4">{dateStr}</h2>
+            <p className="text-sm text-muted-foreground mb-4">{dateStr}</p>
 
             {/* Task List Content */}
-            <div className="flex1 overflow-y-auto">
-                
-
+            <div className="flex-1 overflow-y-auto">
                 {tasks.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                        <p>No tasks for this date</p>
-                        <p className="text-sm mt-2">Click "Add Task" to create one</p>
+                    <div className="text-center py-12 text-muted-foreground">
+                        <p className="text-sm">No tasks for this date</p>
+                        <p className="text-xs mt-1 opacity-75">Click "Add Task" to create one</p>
                     </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         {tasks.map(task => (
                             <div
                                 key={task.id}
-                                className={`task-item border border-border rounded-lg p-4 transition-all ${task.completed ? 'bg-muted opacity-75' : 'bg-card'
+                                className={`group border border-border rounded-lg p-3.5 transition-all hover:border-muted-foreground/20 ${task.completed ? 'bg-muted/50' : 'bg-card'
                                     }`}
                             >
                                 <div className="flex items-start gap-3">
@@ -83,33 +80,38 @@ export default function TaskSection({
                                         type="checkbox"
                                         checked={task.completed}
                                         onChange={() => onToggle(task.id, !task.completed)}
-                                        className="mt-1 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                        className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer"
                                     />
 
-                                    <div className="flex-1">
+                                    <div className="flex-1 min-w-0">
                                         <h3
-                                            className={`font-semibold ${task.completed ? 'text-muted-foreground' : 'text-card-foreground'
+                                            className={`text-sm font-medium ${task.completed
+                                                    ? 'text-muted-foreground'
+                                                    : 'text-card-foreground'
                                                 }`}
                                         >
                                             {task.title}
                                         </h3>
 
                                         {task.description && (
-                                            <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                                            <p className={`text-xs mt-1 ${task.completed ? 'text-muted-foreground/75' : 'text-muted-foreground'
+                                                }`}>
+                                                {task.description}
+                                            </p>
                                         )}
 
                                         <span
-                                            className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded border ${getPriorityColor(
+                                            className={`inline-block mt-2 px-1.5 py-0.5 text-[10px] font-medium rounded border ${getPriorityColor(
                                                 task.priority
                                             )}`}
                                         >
-                                            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
+                                            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                                         </span>
                                     </div>
 
                                     <button
                                         onClick={() => onDelete(task.id)}
-                                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors text-xl"
+                                        className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded transition-all text-lg"
                                         title="Delete task"
                                     >
                                         <MdDelete />

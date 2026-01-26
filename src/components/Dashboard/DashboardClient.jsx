@@ -1,45 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DashboardHeader from '@/components/Dashboard/DashboardHeader';
 import TaskCalendar from '@/components/Dashboard/Calender/TaskCalendar';
 import TaskSection from '@/components/Dashboard/tasks/TaskSection';
 import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
 
-type Task = {
-    id: string;
-    title: string;
-    description?: string | null;
-    date: string;
-    completed: boolean;
-    priority: string;
-    userId: string;
-    createdAt: string;
-    updatedAt: string;
-};
-
-type DashboardClientProps = {
-    user: any;
-};
-
-export default function DashboardClient({ user }: DashboardClientProps) {
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+export default function DashboardClient({ user }) {
+    const [tasks, setTasks] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [filteredTasks, setFilteredTasks] = useState([]);
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // Fetch all tasks on mount
-    useEffect(() => {
-        fetchTasks();
-    }, []);
-
-    // Filter tasks when selected date or tasks change
-    useEffect(() => {
-        filterTasksByDate(selectedDate);
-    }, [selectedDate, tasks]);
+    const [error, setError] = useState(null);
 
     // Fetch tasks from API
     const fetchTasks = async () => {
@@ -64,22 +38,32 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     };
 
     // Filter tasks by selected date
-    const filterTasksByDate = (date: Date) => {
+    const filterTasksByDate = useCallback((date) => {
         const dateStr = date.toISOString().split('T')[0];
         const filtered = tasks.filter(task => {
             const taskDate = new Date(task.date).toISOString().split('T')[0];
             return taskDate === dateStr;
         });
         setFilteredTasks(filtered);
-    };
+    }, [tasks]);
+
+    // Fetch all tasks on mount
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    // Filter tasks when selected date or tasks change
+    useEffect(() => {
+        filterTasksByDate(selectedDate);
+    }, [selectedDate, filterTasksByDate]);
 
     // Handle date selection from calendar
-    const handleDateSelect = (date: Date) => {
+    const handleDateSelect = (date) => {
         setSelectedDate(date);
     };
 
     // Handle task toggle (mark complete/incomplete)
-    const handleToggleTask = async (id: string, completed: boolean) => {
+    const handleToggleTask = async (id, completed) => {
         try {
             const response = await fetch(`/api/tasks/${id}`, {
                 method: 'PATCH',
@@ -100,7 +84,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     };
 
     // Handle task deletion
-    const handleDeleteTask = async (id: string) => {
+    const handleDeleteTask = async (id) => {
         console.log('Delete button clicked for task:', id);
 
         if (!confirm('Are you sure you want to delete this task?')) {
@@ -128,12 +112,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     };
 
     // Handle new task creation
-    const handleCreateTask = async (taskData: {
-        title: string;
-        description: string;
-        date: string;
-        priority: string;
-    }) => {
+    const handleCreateTask = async (taskData) => {
         try {
             const response = await fetch('/api/tasks', {
                 method: 'POST',

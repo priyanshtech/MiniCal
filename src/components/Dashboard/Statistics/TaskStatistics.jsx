@@ -1,15 +1,6 @@
 'use client';
 
-type Task = {
-    id: string;
-    completed: boolean;
-};
-
-type TaskStatisticsProps = {
-    tasks: Task[];
-};
-
-export default function TaskStatistics({ tasks }: TaskStatisticsProps) {
+export default function TaskStatistics({ tasks }) {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.completed).length;
     const pendingTasks = tasks.filter(t => !t.completed).length;

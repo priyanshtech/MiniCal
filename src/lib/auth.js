@@ -13,7 +13,7 @@ export async function getSession() {
  * Get the current authenticated user's ID (Auth0 sub)
  * Returns null if not authenticated
  */
-export async function getUserId(): Promise<string | null> {
+export async function getUserId() {
     const session = await getSession();
     return session?.user?.sub || null;
 }
@@ -22,7 +22,7 @@ export async function getUserId(): Promise<string | null> {
  * Require authentication - redirects to login if not authenticated
  * Returns the user's Auth0 sub (user ID)
  */
-export async function requireAuth(): Promise<string> {
+export async function requireAuth() {
     const userId = await getUserId();
 
     if (!userId) {

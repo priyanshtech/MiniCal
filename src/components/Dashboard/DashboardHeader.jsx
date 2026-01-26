@@ -1,10 +1,6 @@
 'use client';
 
-type DashboardHeaderProps = {
-    userName: string;
-};
-
-export default function DashboardHeader({ userName }: DashboardHeaderProps) {
+export default function DashboardHeader({ userName }) {
     return (
         <header className="bg-card border-b border-border">
             <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">

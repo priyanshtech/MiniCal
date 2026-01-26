@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUserId } from '@/lib/auth';
 
 // GET /api/tasks - Fetch all tasks for the authenticated user
-export async function GET(request: NextRequest) {
+export async function GET(request) {
     try {
         // Step 1: Get the current user's ID from Auth0 session
         const userId = await getUserId();
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         const dateParam = searchParams.get('date');
 
         // Step 4: Build the query filter
-        const whereFilter: any = { userId };
+        const whereFilter = { userId };
 
         if (dateParam) {
             // Filter tasks for specific date (00:00:00 to 23:59:59)
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/tasks - Create a new task for the authenticated user
-export async function POST(request: NextRequest) {
+export async function POST(request) {
     try {
         // Step 1: Get the current user's ID
         const userId = await getUserId();

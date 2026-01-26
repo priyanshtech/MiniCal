@@ -2,30 +2,13 @@
 
 import { MdDelete } from "react-icons/md";
 
-type Task = {
-    id: string;
-    title: string;
-    description?: string | null;
-    date: string;
-    completed: boolean;
-    priority: string;
-};
-
-type TaskSectionProps = {
-    tasks: Task[];
-    selectedDate: Date;
-    onToggle: (id: string, completed: boolean) => void;
-    onDelete: (id: string) => void;
-    onAddTask: () => void;
-};
-
 export default function TaskSection({
     tasks,
     selectedDate,
     onToggle,
     onDelete,
     onAddTask
-}: TaskSectionProps) {
+}) {
     const dateStr = selectedDate.toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
@@ -34,7 +17,7 @@ export default function TaskSection({
     });
 
     // Get priority color - minimal, subtle badges
-    const getPriorityColor = (priority: string) => {
+    const getPriorityColor = (priority) => {
         switch (priority) {
             case 'high':
                 return 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900';
@@ -65,7 +48,7 @@ export default function TaskSection({
                 {tasks.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                         <p className="text-sm">No tasks for this date</p>
-                        <p className="text-xs mt-1 opacity-75">Click "Add Task" to create one</p>
+                        <p className="text-xs mt-1 opacity-75">Click &quot;Add Task&quot; to create one</p>
                     </div>
                 ) : (
                     <div className="space-y-2.5">
@@ -86,8 +69,8 @@ export default function TaskSection({
                                     <div className="flex-1 min-w-0">
                                         <h3
                                             className={`text-sm font-medium ${task.completed
-                                                    ? 'text-muted-foreground'
-                                                    : 'text-card-foreground'
+                                                ? 'text-muted-foreground'
+                                                : 'text-card-foreground'
                                                 }`}
                                         >
                                             {task.title}

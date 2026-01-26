@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserId } from "@/lib/auth";
 
 // PATCH /api/tasks/[id]
 export async function PATCH(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    request,
+    { params }
 ) {
     try {
         // Next.js 15+ requires awaiting params
@@ -55,8 +55,8 @@ export async function PATCH(
 
 // DELETE /api/tasks/[id]
 export async function DELETE(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    request,
+    { params }
 ) {
     try {
         // Next.js 15+ requires awaiting params

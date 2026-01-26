@@ -2,23 +2,12 @@
 
 import { useState } from 'react';
 
-type TaskFormProps = {
-    selectedDate: Date;
-    onSubmit: (task: {
-        title: string;
-        description: string;
-        date: string;
-        priority: string;
-    }) => void;
-    onCancel: () => void;
-};
-
-export default function TaskForm({ selectedDate, onSubmit, onCancel }: TaskFormProps) {
+export default function TaskForm({ selectedDate, onSubmit, onCancel }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState('medium');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!title.trim()) {

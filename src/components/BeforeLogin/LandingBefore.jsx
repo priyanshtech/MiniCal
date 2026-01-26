@@ -16,7 +16,9 @@ export default function LandingBefore() {
     }, []);
 
     return (
-        <div className="min-h-screen overflow-x-hidden">
+        <div className="min-h-screen overflow-x-hidden relative">
+            {/* Grid Background */}
+            <div className="absolute inset-0 -z-10 h-full w-full bg-white [background-image:linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] [background-size:40px_40px]"></div>
 
             {/* Navbar */}
             <nav className={`fixed top-0 left-0 right-0 h-16 backdrop-blur-md z-50 transition-all duration-300 ${scrolled ? ' shadow-lg shadow-blue-500/10' : ''
@@ -73,7 +75,7 @@ export default function LandingBefore() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Link
                             href="/auth/login"
-                            className="group px-8 py-4 rounded-xl text-lg font-bold bg-yellow-200 transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center gap-2"
+                            className="group px-8 py-4 rounded-xl text-lg font-bold bg-yellow-200 hover:bg-yellow-500 transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center gap-2"
                         >
                             Start Planning Now
                             <LuArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

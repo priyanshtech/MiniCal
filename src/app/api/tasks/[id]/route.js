@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserId } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 // PATCH /api/tasks/[id]
 export async function PATCH(
     request,

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUserId } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/tasks - Fetch all tasks for the authenticated user
 export async function GET(request) {
     try {

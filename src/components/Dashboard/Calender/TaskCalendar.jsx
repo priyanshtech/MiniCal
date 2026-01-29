@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-export default function TaskCalendar({ tasks, onDateSelect }) {
+export default function TaskCalendar({ tasks, dayRatings, onDateSelect }) {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     // Handle when user clicks a date
@@ -13,15 +13,27 @@ export default function TaskCalendar({ tasks, onDateSelect }) {
         onDateSelect(date);
     };
 
-    // Add custom class to tiles with tasks
+    // Add custom class to tiles with tasks and ratings
     const tileClassName = ({ date }) => {
         const dateStr = date.toISOString().split('T')[0];
+        const classes = [];
+
+        // Check for tasks
         const hasTasks = tasks.some(task => {
             const taskDate = new Date(task.date).toISOString().split('T')[0];
             return taskDate === dateStr;
         });
+        if (hasTasks) classes.push('has-tasks');
 
-        return hasTasks ? 'has-tasks' : '';
+        // Check for ratings
+        if (dayRatings && dayRatings[dateStr]) {
+            const rating = dayRatings[dateStr];
+            if (rating === 'good') classes.push('rating-good');
+            if (rating === 'average') classes.push('rating-average');
+            if (rating === 'bad') classes.push('rating-bad');
+        }
+
+        return classes.join(' ');
     };
 
     return (

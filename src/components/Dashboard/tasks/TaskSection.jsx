@@ -3,6 +3,8 @@
 import { MdDelete } from "react-icons/md";
 
 export default function TaskSection({
+    dayRatings,
+    onRateDay,
     tasks,
     selectedDate,
     onToggle,
@@ -40,6 +42,16 @@ export default function TaskSection({
                 >
                     Add Task
                 </button>
+                <select
+                    onChange={(e) => onRateDay(e.target.value)}
+                    className="border border-border rounded-md px-2 py-1 text-sm bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    defaultValue=""
+                >
+                    <option value="" disabled>Rate Day</option>
+                    <option value="good">Good</option>
+                    <option value="average">Average</option>
+                    <option value="bad">Bad</option>
+                </select>
             </div>
             <p className="text-sm text-muted-foreground mb-4">{dateStr}</p>
 

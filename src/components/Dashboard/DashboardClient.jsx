@@ -14,7 +14,8 @@ export default function DashboardClient({ user }) {
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [dayRatings, setDayRatings] = useState({});
+    //fetch day ratings
     //fetch tasks
     //filter tasks
     //handle date selection
@@ -25,6 +26,19 @@ export default function DashboardClient({ user }) {
     //handle task creation
 
 
+    const fetchDayRatings = async () => {
+        const response = await fetch('/api/days');
+        if (response.ok) {
+            const data = await response.json();
+            // Convert array to object for easier lookup: { 'YYYY-MM-DD': 'good', ... }
+            const ratingsMap = {};
+            data.ratings.forEach(r => {
+                const dateStr = new Date(r.date).toISOString().split('T')[0];
+                ratingsMap[dateStr] = r.rating;
+            });
+            setDayRatings(ratingsMap);
+        }
+    };
 
 
     // Fetch tasks from API
@@ -62,6 +76,7 @@ export default function DashboardClient({ user }) {
     // Fetch all tasks on mount
     useEffect(() => {
         fetchTasks();
+        fetchDayRatings();
     }, []);
 
     // Filter tasks when selected date or tasks change
@@ -123,6 +138,31 @@ export default function DashboardClient({ user }) {
         }
     };
 
+    // Handle user rating the day (good, bad, average)
+    const handleRateDay = async (rating) => {
+        try {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            const response = await fetch('/api/days', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    date: dateStr,
+                    rating: rating,
+                    userId: user?.id || 'demo-user' // Fallback if user ID is missing
+                })
+            });
+
+            if (response.ok) {
+                await fetchDayRatings(); // Refresh ratings to update UI (calendar colors)
+            } else {
+                console.error('Failed to save day rating');
+            }
+        } catch (error) {
+            console.error('Error saving day rating:', error);
+        }
+    };
+
     // Handle new task creation
     const handleCreateTask = async (taskData) => {
         try {
@@ -166,10 +206,13 @@ export default function DashboardClient({ user }) {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <TaskCalendar
                                 tasks={tasks}
+                                dayRatings={dayRatings}
                                 onDateSelect={handleDateSelect}
                             />
 
                             <TaskSection
+                                dayRatings={dayRatings}
+                                onRateDay={handleRateDay}
                                 tasks={filteredTasks}
                                 selectedDate={selectedDate}
                                 onToggle={handleToggleTask}

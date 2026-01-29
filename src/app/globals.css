@@ -240,4 +240,33 @@
   .dark .react-calendar__navigation button:enabled:focus {
     background-color: oklch(67.621% 0.14732 144.19);
   }
+  .react-calendar__tile.rating-good {
+    background-color: #dcfce7 !important; /* emerald-100 */
+    color: #166534 !important; /* emerald-700 */
+  }
+
+  .react-calendar__tile.rating-average {
+    background-color: #fef3c7 !important; /* amber-100 */
+    color: #b45309 !important; /* amber-700 */
+  }
+
+  .react-calendar__tile.rating-bad {
+    background-color: #fee2e2 !important; /* red-100 */
+    color: #b91c1c !important; /* red-700 */
+  }
+
+  .dark .react-calendar__tile.rating-good {
+    background-color: rgba(5, 150, 105, 0.2) !important;
+    color: #6ee7b7 !important;
+  }
+
+  .dark .react-calendar__tile.rating-average {
+    background-color: rgba(217, 119, 6, 0.2) !important;
+    color: #fcd34d !important;
+  }
+
+  .dark .react-calendar__tile.rating-bad {
+    background-color: rgba(220, 38, 38, 0.2) !important;
+    color: #fca5a5 !important;
+  }
 }

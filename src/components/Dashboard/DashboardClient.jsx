@@ -6,12 +6,15 @@ import TaskCalendar from '@/components/Dashboard/Calender/TaskCalendar';
 import TaskSection from '@/components/Dashboard/tasks/TaskSection';
 import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
+import TaskEditForm from './tasks/EditTask';
 
 export default function DashboardClient({ user }) {
     const [tasks, setTasks] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [showTaskForm, setShowTaskForm] = useState(false);
+    const [showEditTaskForm, setShowEditTaskForm] = useState(false);
+    const [editingTask, setEditingTask] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [dayRatings, setDayRatings] = useState({});
@@ -63,6 +66,38 @@ export default function DashboardClient({ user }) {
         }
     };
 
+
+    const fetchTaskById = async (taskId) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch(`/api/tasks/${taskId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                return data; // single task object
+            } else {
+                setError(data.error || "Failed to fetch task");
+                console.error("Failed to fetch task:", data.error);
+                return null;
+            }
+        } catch (error) {
+            setError("Error fetching task");
+            console.error("Error fetching task:", error);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const handleEdit = async (taskId) => {
+        const task = await fetchTaskById(taskId);     // store clicked task id
+        setEditingTask(task);
+        setShowEditTaskForm(true);          // open modal
+    };
+
     // Filter tasks by selected date
     const filterTasksByDate = useCallback((date) => {
         const dateStr = date.toISOString().split('T')[0];
@@ -95,7 +130,9 @@ export default function DashboardClient({ user }) {
             const response = await fetch(`/api/tasks/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ completed })
+                body: JSON.stringify({
+                    completed
+                })
             });
 
             if (response.ok) {
@@ -106,6 +143,31 @@ export default function DashboardClient({ user }) {
             }
         } catch (error) {
             console.error('Error toggling task:', error);
+            alert('Error updating task');
+        }
+    };
+
+
+
+    // Handle full task update from Edit form
+    const handleUpdateTask = async (updatedTask) => {
+        try {
+            const response = await fetch(`/api/tasks/${updatedTask.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedTask)
+            });
+
+            if (response.ok) {
+                await fetchTasks();
+                setShowEditTaskForm(false);
+                setEditingTask(null);
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Failed to update task');
+            }
+        } catch (error) {
+            console.error('Error updating task:', error);
             alert('Error updating task');
         }
     };
@@ -218,6 +280,8 @@ export default function DashboardClient({ user }) {
                                 onToggle={handleToggleTask}
                                 onDelete={handleDeleteTask}
                                 onAddTask={() => setShowTaskForm(true)}
+                                handleEdit={handleEdit}
+
                             />
                         </div>
 
@@ -232,6 +296,14 @@ export default function DashboardClient({ user }) {
                     selectedDate={selectedDate}
                     onSubmit={handleCreateTask}
                     onCancel={() => setShowTaskForm(false)}
+                />
+            )}
+            {showEditTaskForm && (
+                <TaskEditForm
+                    selectedDate={selectedDate}
+                    task={editingTask}
+                    onSubmit={handleUpdateTask}
+                    onCancel={() => setShowEditTaskForm(false)}
                 />
             )}
         </div>

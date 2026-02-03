@@ -1,6 +1,6 @@
 'use client';
 
-import { MdDelete } from "react-icons/md";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 export default function TaskSection({
     dayRatings,
@@ -10,6 +10,7 @@ export default function TaskSection({
     onToggle,
     onDelete,
     onAddTask
+    ,handleEdit
 }) {
     const dateStr = selectedDate.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -76,7 +77,10 @@ export default function TaskSection({
                                         checked={task.completed}
                                         onChange={() => onToggle(task.id, !task.completed)}
                                         className="mt-0.5 w-4 h-4 rounded border-border cursor-pointer accent-black"
-                                    />
+                                    /><button onClick={() => handleEdit(task.id)}>
+  <MdEdit />
+</button>
+
 
                                     <div className="flex-1 min-w-0">
                                         <h3

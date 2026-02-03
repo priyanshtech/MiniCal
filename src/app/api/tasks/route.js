@@ -4,6 +4,16 @@ import { getUserId } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+//Get all tasks 
+//post all tasks 
+
+
+
+
+
+
+
+
 // GET /api/tasks - Fetch all tasks for the authenticated user
 export async function GET(request) {
     try {

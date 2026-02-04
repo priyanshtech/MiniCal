@@ -7,6 +7,7 @@ import TaskSection from '@/components/Dashboard/tasks/TaskSection';
 import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
 import TaskEditForm from './tasks/EditTask';
+import { ja } from 'date-fns/locale';
 
 
 export default function DashboardClient({ user }) {
@@ -94,7 +95,7 @@ export default function DashboardClient({ user }) {
 
 
     const handleEdit = async (taskId) => {
-        const task = await fetchTaskById(taskId);     // store clicked task id
+        const task = await fetchTaskById(taskId);     // store clicked task id 
         setEditingTask(task);
         setShowEditTaskForm(true);          // open modal
     };
@@ -152,6 +153,8 @@ export default function DashboardClient({ user }) {
 
     // Handle full task update from Edit form
     const handleUpdateTask = async (updatedTask) => {
+        setTasks(prev=> prev.map(task=> task.id ===updatedTask.id ? {...task , ...updatedTask}:task))
+        setShowEditTaskForm(false)
         try {
             const response = await fetch(`/api/tasks/${updatedTask.id}`, {
                 method: 'PATCH',
@@ -160,7 +163,7 @@ export default function DashboardClient({ user }) {
             });
 
             if (response.ok) {
-                await fetchTasks();
+                
                 setShowEditTaskForm(false);
                 setEditingTask(null);
             } else {

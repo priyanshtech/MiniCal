@@ -8,6 +8,7 @@ import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
 import TaskEditForm from './tasks/EditTask';
 
+
 export default function DashboardClient({ user }) {
     const [tasks, setTasks] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -174,6 +175,7 @@ export default function DashboardClient({ user }) {
 
     // Handle task deletion
     const handleDeleteTask = async (id) => {
+        setTasks(prev => prev.filter(i=>i.id === id))
         console.log('Delete button clicked for task:', id);
 
         if (!confirm('Are you sure you want to delete this task?')) {

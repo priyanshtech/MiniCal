@@ -8,20 +8,13 @@ export const dynamic = "force-dynamic";
 //patch (update or edit task)
 //delete(specific task)
 
-
-// GET /api/tasks/[id]
 export async function GET(
     request,
     { params }
 ) {
     try { 
-        // Next.js 15+ requires awaiting params
         const { id } = await params;
-
-        // Get the current user's ID
         const userId = await getUserId();
-
-        // Check authentication
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },
@@ -50,19 +43,13 @@ export async function GET(
     }
 }
 
-// PATCH /api/tasks/[id]
 export async function PATCH(
     request,
     { params }
 ) {
     try {
-        // Next.js 15+ requires awaiting params
         const { id } = await params;
-
-        // Get the current user's ID
         const userId = await getUserId();
-
-        // Check authentication
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },
@@ -71,7 +58,7 @@ export async function PATCH(
         }
 
         const body = await request.json();
-
+        //where and data is a prisma thing 
         const result = await prisma.task.updateMany({
             where: {
                 id,
@@ -101,19 +88,13 @@ export async function PATCH(
     }
 }
 
-// DELETE /api/tasks/[id]
 export async function DELETE(
     request,
     { params }
 ) {
     try {
-        // Next.js 15+ requires awaiting params
         const { id } = await params;
-
-        // Get the current user's ID
         const userId = await getUserId();
-
-        // Check authentication
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },

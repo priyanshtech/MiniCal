@@ -17,10 +17,8 @@ export const dynamic = 'force-dynamic';
 // GET /api/tasks - Fetch all tasks for the authenticated user
 export async function GET(request) {
     try {
-        // Step 1: Get the current user's ID from Auth0 session
-        const userId = await getUserId();
 
-        // Step 2: If no user is logged in, return 401 Unauthorized
+        const userId = await getUserId();
         if (!userId) {
             return NextResponse.json(
                 { error: 'Unauthorized - Please log in' },
@@ -28,29 +26,28 @@ export async function GET(request) {
             );
         }
 
-        // Step 3: Optional - Get date filter from query params
-        // Example: /api/tasks?date=2026-01-19
+        //new URL converts request.url from string to readable url 
+        // searchParams is the part after ? in the url 
         const { searchParams } = new URL(request.url);
-        const dateParam = searchParams.get('date');
+        const date = searchParams.get('date');
 
         // Step 4: Build the query filter
         const whereFilter = { userId };
 
-        if (dateParam) {
-            // Filter tasks for specific date (00:00:00 to 23:59:59)
+        if (date) {
+            //gte == greater than equal to 
+            // new Date converts this date into readable date 
             whereFilter.date = {
-                gte: new Date(dateParam + 'T00:00:00'),
-                lt: new Date(dateParam + 'T23:59:59')
+                gte: new Date(date + 'T00:00:00'),
+                lt: new Date(date + 'T23:59:59')
             };
         }
 
-        // Step 5: Fetch tasks from database
         const tasks = await prisma.task.findMany({
             where: whereFilter,
-            orderBy: { date: 'asc' } // Sort by date, earliest first
+            orderBy: { date: 'asc' }
         });
 
-        // Step 6: Return tasks as JSON
         return NextResponse.json({
             tasks,
             count: tasks.length
@@ -65,13 +62,9 @@ export async function GET(request) {
     }
 }
 
-// POST /api/tasks - Create a new task for the authenticated user
 export async function POST(request) {
     try {
-        // Step 1: Get the current user's ID
         const userId = await getUserId();
-
-        // Step 2: Check authentication
         if (!userId) {
             return NextResponse.json(
                 { error: 'Unauthorized - Please log in' },
@@ -79,11 +72,10 @@ export async function POST(request) {
             );
         }
 
-        // Step 3: Parse request body
+
         const body = await request.json();
         const { title, description, date, priority } = body;
 
-        // Step 4: Validate required fields
         if (!title || !date) {
             return NextResponse.json(
                 { error: 'Title and date are required' },
@@ -91,15 +83,14 @@ export async function POST(request) {
             );
         }
 
-        // Step 5: Create task in database
-        // IMPORTANT: userId is set from session, not from request body
+        // userId is set from session, not from request body
         const task = await prisma.task.create({
             data: {
                 title,
                 description: description || null,
                 date: new Date(date),
                 priority: priority || 'medium',
-                userId // This links the task to the logged-in user
+                userId
             }
         });
 

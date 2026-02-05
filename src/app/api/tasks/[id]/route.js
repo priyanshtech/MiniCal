@@ -14,7 +14,7 @@ export async function GET(
     request,
     { params }
 ) {
-    try {
+    try { 
         // Next.js 15+ requires awaiting params
         const { id } = await params;
 

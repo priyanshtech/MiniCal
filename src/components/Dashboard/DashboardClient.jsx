@@ -7,7 +7,7 @@ import TaskSection from '@/components/Dashboard/tasks/TaskSection';
 import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
 import TaskEditForm from './tasks/EditTask';
-import { ja } from 'date-fns/locale';
+
 
 
 export default function DashboardClient({ user }) {
@@ -128,6 +128,12 @@ export default function DashboardClient({ user }) {
 
     // Handle task toggle (mark complete/incomplete)
     const handleToggleTask = async (id, completed) => {
+        // Store original tasks for rollback
+        const originalTasks = [...tasks];
+
+        // Optimistic update
+        setTasks(prev => prev.map(task => task.id === id ? { ...task, completed } : task));
+
         try {
             const response = await fetch(`/api/tasks/${id}`, {
                 method: 'PATCH',
@@ -137,13 +143,15 @@ export default function DashboardClient({ user }) {
                 })
             });
 
-            if (response.ok) {
-                await fetchTasks(); // Refresh tasks
-            } else {
+            if (!response.ok) {
+                // Rollback on failure
+                setTasks(originalTasks);
                 const data = await response.json();
                 alert(data.error || 'Failed to update task');
             }
         } catch (error) {
+            // Rollback on network error
+            setTasks(originalTasks);
             console.error('Error toggling task:', error);
             alert('Error updating task');
         }
@@ -153,7 +161,7 @@ export default function DashboardClient({ user }) {
 
     // Handle full task update from Edit form
     const handleUpdateTask = async (updatedTask) => {
-        setTasks(prev=> prev.map(task=> task.id ===updatedTask.id ? {...task , ...updatedTask}:task))
+        setTasks(prev => prev.map(task => task.id === updatedTask.id ? { ...task, ...updatedTask } : task))
         setShowEditTaskForm(false)
         try {
             const response = await fetch(`/api/tasks/${updatedTask.id}`, {
@@ -163,7 +171,7 @@ export default function DashboardClient({ user }) {
             });
 
             if (response.ok) {
-                
+
                 setShowEditTaskForm(false);
                 setEditingTask(null);
             } else {
@@ -178,7 +186,7 @@ export default function DashboardClient({ user }) {
 
     // Handle task deletion
     const handleDeleteTask = async (id) => {
-        setTasks(prev => prev.filter(i=>i.id === id))
+        setTasks(prev => prev.filter(i => i.id === id))
         console.log('Delete button clicked for task:', id);
 
         if (!confirm('Are you sure you want to delete this task?')) {
@@ -194,7 +202,6 @@ export default function DashboardClient({ user }) {
 
             if (response.ok) {
                 console.log('Task deleted successfully');
-                await fetchTasks(); // Refresh tasks
             } else {
                 const data = await response.json();
                 alert(data.error || 'Failed to delete task');
@@ -233,17 +240,20 @@ export default function DashboardClient({ user }) {
     // Handle new task creation
     const handleCreateTask = async (taskData) => {
         try {
+            // It's safer to wait for the ID from the server for Create operations
             const response = await fetch('/api/tasks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(taskData)
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                await fetchTasks(); // Refresh tasks
-                setShowTaskForm(false); // Close form
+                // Add the task with its database-generated ID
+                setTasks(prev => [...prev, data.task]);
+                setShowTaskForm(false);
             } else {
-                const data = await response.json();
                 alert(data.error || 'Failed to create task');
             }
         } catch (error) {

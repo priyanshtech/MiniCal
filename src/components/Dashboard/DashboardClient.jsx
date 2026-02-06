@@ -186,27 +186,29 @@ export default function DashboardClient({ user }) {
 
     // Handle task deletion
     const handleDeleteTask = async (id) => {
-        setTasks(prev => prev.filter(i => i.id === id))
-        console.log('Delete button clicked for task:', id);
-
         if (!confirm('Are you sure you want to delete this task?')) {
-            console.log('Delete cancelled by user');
             return;
         }
 
-        console.log('Deleting task:', id);
+        const originalTasks = [...tasks];
+
+        // Optimistic update: filter OUT the deleted task
+        setTasks(prev => prev.filter(task => task.id !== id));
+
         try {
             const response = await fetch(`/api/tasks/${id}`, {
                 method: 'DELETE'
             });
 
-            if (response.ok) {
-                console.log('Task deleted successfully');
-            } else {
+            if (!response.ok) {
+                // Rollback on failure
+                setTasks(originalTasks);
                 const data = await response.json();
                 alert(data.error || 'Failed to delete task');
             }
         } catch (error) {
+            // Rollback on network error
+            setTasks(originalTasks);
             console.error('Error deleting task:', error);
             alert('Error deleting task');
         }

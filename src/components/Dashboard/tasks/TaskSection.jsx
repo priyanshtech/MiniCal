@@ -1,8 +1,7 @@
-'use client';
-
+import { memo } from 'react';
 import { MdEdit, MdDelete } from "react-icons/md";
 
-export default function TaskSection({
+const TaskSection = memo(function TaskSection({
     dayRatings,
     onRateDay,
     tasks,
@@ -10,7 +9,7 @@ export default function TaskSection({
     onToggle,
     onDelete,
     onAddTask
-    ,handleEdit
+    , handleEdit
 }) {
     const dateStr = selectedDate.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -78,8 +77,8 @@ export default function TaskSection({
                                         onChange={() => onToggle(task.id, !task.completed)}
                                         className="mt-0.5 w-4 h-4 rounded border-border cursor-pointer accent-black"
                                     /><button onClick={() => handleEdit(task.id)}>
-  <MdEdit />
-</button>
+                                        <MdEdit />
+                                    </button>
 
 
                                     <div className="flex-1 min-w-0">
@@ -123,4 +122,6 @@ export default function TaskSection({
             </div>
         </div>
     );
-}
+});
+
+export default TaskSection;

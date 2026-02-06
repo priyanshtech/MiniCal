@@ -1,6 +1,6 @@
-'use client';
+import { memo } from 'react';
 
-export default function TaskStatistics({ tasks }) {
+const TaskStatistics = memo(function TaskStatistics({ tasks }) {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.completed).length;
     const pendingTasks = tasks.filter(t => !t.completed).length;
@@ -46,4 +46,6 @@ export default function TaskStatistics({ tasks }) {
             </div>
         </section>
     );
-}
+});
+
+export default TaskStatistics;

@@ -1,10 +1,8 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-export default function TaskCalendar({ tasks, dayRatings, onDateSelect }) {
+const TaskCalendar = memo(function TaskCalendar({ tasks, dayRatings, onDateSelect }) {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     // Handle when user clicks a date
@@ -49,4 +47,6 @@ export default function TaskCalendar({ tasks, dayRatings, onDateSelect }) {
             </div>
         </div>
     );
-}
+});
+
+export default TaskCalendar;

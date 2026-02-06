@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import DashboardHeader from '@/components/Header/DashboardHeader';
 import TaskCalendar from '@/components/Dashboard/Calender/TaskCalendar';
 import TaskSection from '@/components/Dashboard/tasks/TaskSection';
@@ -8,12 +8,9 @@ import TaskStatistics from '@/components/Dashboard/Statistics/TaskStatistics';
 import TaskForm from '@/components/Dashboard/tasks/AddTask';
 import TaskEditForm from './tasks/EditTask';
 
-
-
 export default function DashboardClient({ user }) {
     const [tasks, setTasks] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [filteredTasks, setFilteredTasks] = useState([]);
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [showEditTaskForm, setShowEditTaskForm] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
@@ -31,11 +28,10 @@ export default function DashboardClient({ user }) {
     //handle task creation
 
 
-    const fetchDayRatings = async () => {
+    const fetchDayRatings = useCallback(async () => {
         const response = await fetch('/api/days');
         if (response.ok) {
             const data = await response.json();
-            // Convert array to object for easier lookup: { 'YYYY-MM-DD': 'good', ... }
             const ratingsMap = {};
             data.ratings.forEach(r => {
                 const dateStr = new Date(r.date).toISOString().split('T')[0];
@@ -43,11 +39,9 @@ export default function DashboardClient({ user }) {
             });
             setDayRatings(ratingsMap);
         }
-    };
+    }, []);
 
-
-    // Fetch tasks from API
-    const fetchTasks = async () => {
+    const fetchTasks = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -66,10 +60,9 @@ export default function DashboardClient({ user }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-
-    const fetchTaskById = async (taskId) => {
+    const fetchTaskById = useCallback(async (taskId) => {
         try {
             setLoading(true);
             setError(null);
@@ -91,44 +84,33 @@ export default function DashboardClient({ user }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-
-    const handleEdit = async (taskId) => {
-        const task = await fetchTaskById(taskId);     // store clicked task id 
+    const handleEdit = useCallback(async (taskId) => {
+        const task = await fetchTaskById(taskId);
         setEditingTask(task);
-        setShowEditTaskForm(true);          // open modal
-    };
+        setShowEditTaskForm(true);
+    }, [fetchTaskById]);
 
-    // Filter tasks by selected date
-    const filterTasksByDate = useCallback((date) => {
-        const dateStr = date.toISOString().split('T')[0];
-        const filtered = tasks.filter(task => {
+    const filteredTasks = useMemo(() => {
+        const dateStr = selectedDate.toISOString().split('T')[0];
+        return tasks.filter(task => {
             const taskDate = new Date(task.date).toISOString().split('T')[0];
             return taskDate === dateStr;
         });
-        setFilteredTasks(filtered);
-    }, [tasks]);
+    }, [tasks, selectedDate]);
 
     // Fetch all tasks on mount
     useEffect(() => {
         fetchTasks();
         fetchDayRatings();
+    }, [fetchTasks, fetchDayRatings]);
+
+    const handleDateSelect = useCallback((date) => {
+        setSelectedDate(date);
     }, []);
 
-    // Filter tasks when selected date or tasks change
-    useEffect(() => {
-        filterTasksByDate(selectedDate);
-    }, [selectedDate, filterTasksByDate]);
-
-    // Handle date selection from calendar
-    const handleDateSelect = (date) => {
-        setSelectedDate(date);
-    };
-
-    // Handle task toggle (mark complete/incomplete)
-    const handleToggleTask = async (id, completed) => {
-        // Store original tasks for rollback
+    const handleToggleTask = useCallback(async (id, completed) => {
         const originalTasks = [...tasks];
 
         // Optimistic update
@@ -138,9 +120,7 @@ export default function DashboardClient({ user }) {
             const response = await fetch(`/api/tasks/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    completed
-                })
+                body: JSON.stringify({ completed })
             });
 
             if (!response.ok) {
@@ -155,14 +135,13 @@ export default function DashboardClient({ user }) {
             console.error('Error toggling task:', error);
             alert('Error updating task');
         }
-    };
+    }, [tasks]);
 
+    const handleUpdateTask = useCallback(async (updatedTask) => {
+        const originalTasks = [...tasks];
+        setTasks(prev => prev.map(task => task.id === updatedTask.id ? { ...task, ...updatedTask } : task));
+        setShowEditTaskForm(false);
 
-
-    // Handle full task update from Edit form
-    const handleUpdateTask = async (updatedTask) => {
-        setTasks(prev => prev.map(task => task.id === updatedTask.id ? { ...task, ...updatedTask } : task))
-        setShowEditTaskForm(false)
         try {
             const response = await fetch(`/api/tasks/${updatedTask.id}`, {
                 method: 'PATCH',
@@ -171,21 +150,20 @@ export default function DashboardClient({ user }) {
             });
 
             if (response.ok) {
-
-                setShowEditTaskForm(false);
                 setEditingTask(null);
             } else {
+                setTasks(originalTasks);
                 const data = await response.json();
                 alert(data.error || 'Failed to update task');
             }
         } catch (error) {
+            setTasks(originalTasks);
             console.error('Error updating task:', error);
             alert('Error updating task');
         }
-    };
+    }, [tasks]);
 
-    // Handle task deletion
-    const handleDeleteTask = async (id) => {
+    const handleDeleteTask = useCallback(async (id) => {
         if (!confirm('Are you sure you want to delete this task?')) {
             return;
         }
@@ -212,10 +190,9 @@ export default function DashboardClient({ user }) {
             console.error('Error deleting task:', error);
             alert('Error deleting task');
         }
-    };
+    }, [tasks]);
 
-    // Handle user rating the day (good, bad, average)
-    const handleRateDay = async (rating) => {
+    const handleRateDay = useCallback(async (rating) => {
         try {
             const dateStr = selectedDate.toISOString().split('T')[0];
 
@@ -237,10 +214,9 @@ export default function DashboardClient({ user }) {
         } catch (error) {
             console.error('Error saving day rating:', error);
         }
-    };
+    }, [selectedDate, user?.id, fetchDayRatings]);
 
-    // Handle new task creation
-    const handleCreateTask = async (taskData) => {
+    const handleCreateTask = useCallback(async (taskData) => {
         try {
             // It's safer to wait for the ID from the server for Create operations
             const response = await fetch('/api/tasks', {
@@ -262,7 +238,7 @@ export default function DashboardClient({ user }) {
             console.error('Error creating task:', error);
             alert('Error creating task');
         }
-    };
+    }, []);
 
     return (
         <div className="min-h-screen bg-background">

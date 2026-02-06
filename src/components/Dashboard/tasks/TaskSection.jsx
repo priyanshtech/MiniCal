@@ -110,7 +110,7 @@ export default function TaskSection({
 
                                     <button
                                         onClick={() => onDelete(task.id)}
-                                        className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded transition-all text-lg"
+                                        className="opacity-70 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1.5 rounded transition-all text-lg"
                                         title="Delete task"
                                     >
                                         <MdDelete />

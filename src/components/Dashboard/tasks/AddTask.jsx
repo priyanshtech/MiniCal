@@ -100,18 +100,19 @@ export default function TaskForm({ selectedDate, onSubmit, onCancel }) {
                     {/* Buttons */}
                     <div className="flex gap-2 pt-2">
                         <button
-                            type="submit"
-                            className="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-md hover:opacity-90 transition-opacity font-medium text-sm"
-                        >
-                            Add Task
-                        </button>
-                        <button
                             type="button"
                             onClick={onCancel}
                             className="flex-1 bg-muted text-foreground py-2 px-4 rounded-md hover:bg-muted/80 transition-colors font-medium text-sm"
                         >
                             Cancel
                         </button>
+                        <button
+                            type="submit"
+                            className="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-md hover:opacity-90 transition-opacity font-medium text-sm"
+                        >
+                            Add Task
+                        </button>
+                        
                     </div>
                 </form>
             </div>
